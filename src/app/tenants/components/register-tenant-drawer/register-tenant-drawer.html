@@ -1,0 +1,43 @@
+<p-drawer
+  [visible]="visible()"
+  (visibleChange)="visible.set($event)"
+  position="right"
+  styleClass="!w-full sm:!w-96"
+  header="Register tenant"
+>
+  <form class="flex h-full flex-col gap-5" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="field-group">
+      <label class="field-label" for="register-public-name">Public name</label>
+      <input class="field-input" id="register-public-name" type="text" formControlName="public_name" />
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="register-slug">Slug</label>
+      <input
+        class="field-input"
+        id="register-slug"
+        type="text"
+        formControlName="slug"
+        placeholder="lowercase-and-dashes"
+      />
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="register-api-base-url">API base URL</label>
+      <input
+        class="field-input"
+        id="register-api-base-url"
+        type="url"
+        formControlName="api_base_url"
+        placeholder="https://api.tenant.manttio.app"
+      />
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="register-neon-ref">Neon project ref</label>
+      <input class="field-input" id="register-neon-ref" type="text" formControlName="neon_project_ref" />
+    </div>
+
+    <div class="mt-auto flex justify-end gap-3">
+      <button class="btn-neutral" type="button" (click)="visible.set(false)">Cancel</button>
+      <button class="btn-primary" type="submit" [disabled]="form.invalid">Register</button>
+    </div>
+  </form>
+</p-drawer>

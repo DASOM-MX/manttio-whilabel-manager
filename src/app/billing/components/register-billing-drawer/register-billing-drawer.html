@@ -1,0 +1,69 @@
+<p-drawer
+  [visible]="visible()"
+  (visibleChange)="visible.set($event)"
+  position="right"
+  styleClass="!w-full sm:!w-96"
+  header="Register billing info"
+>
+  <form class="flex h-full flex-col gap-5" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="field-group">
+      <label class="field-label" for="register-billing-tenant">Tenant</label>
+      <p-select
+        class="field-input"
+        inputId="register-billing-tenant"
+        [options]="tenants()"
+        optionLabel="public_name"
+        optionValue="env_id"
+        formControlName="env_id"
+        placeholder="Select tenant"
+        [filter]="true"
+        filterBy="public_name,slug"
+        appendTo="body"
+      />
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="register-billing-plan">Plan</label>
+      <p-select
+        class="field-input"
+        inputId="register-billing-plan"
+        [options]="planOptions"
+        optionLabel="label"
+        optionValue="value"
+        formControlName="plan"
+        appendTo="body"
+      />
+      <p class="text-xs text-surface-500 dark:text-surface-400">
+        @if (selectedPlanPricing().recurrence === 'monthly') {
+          $375 MXN per month
+        } @else {
+          $25,000 MXN one-time — 5-year support
+        }
+      </p>
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="register-billing-email">Billing email</label>
+      <input class="field-input" id="register-billing-email" type="email" formControlName="billing_email" />
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="register-billing-payment-type">Payment type</label>
+      <p-select
+        class="field-input"
+        inputId="register-billing-payment-type"
+        [options]="paymentTypeOptions"
+        optionLabel="label"
+        optionValue="value"
+        formControlName="payment_type"
+        appendTo="body"
+      />
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="register-billing-notes">Notes</label>
+      <textarea class="field-input !h-auto" id="register-billing-notes" rows="3" formControlName="notes"></textarea>
+    </div>
+
+    <div class="mt-auto flex justify-end gap-3">
+      <button class="btn-neutral" type="button" (click)="visible.set(false)">Cancel</button>
+      <button class="btn-primary" type="submit" [disabled]="form.invalid">Register</button>
+    </div>
+  </form>
+</p-drawer>

@@ -1,0 +1,35 @@
+<p-drawer
+  [visible]="visible()"
+  (visibleChange)="visible.set($event)"
+  position="right"
+  styleClass="!w-full sm:!w-96"
+  header="Register user"
+>
+  <form class="flex h-full flex-col gap-5" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="field-group">
+      <label class="field-label" for="register-user-name">Name</label>
+      <input class="field-input" id="register-user-name" type="text" formControlName="name" />
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="register-user-email">Email</label>
+      <input class="field-input" id="register-user-email" type="email" formControlName="email" />
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="register-user-role">Role</label>
+      <p-select
+        class="field-input"
+        inputId="register-user-role"
+        [options]="roleOptions"
+        optionLabel="label"
+        optionValue="value"
+        formControlName="role"
+        appendTo="body"
+      />
+    </div>
+
+    <div class="mt-auto flex justify-end gap-3">
+      <button class="btn-neutral" type="button" (click)="visible.set(false)">Cancel</button>
+      <button class="btn-primary" type="submit" [disabled]="form.invalid">Register</button>
+    </div>
+  </form>
+</p-drawer>

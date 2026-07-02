@@ -1,0 +1,4 @@
+/* Per-component PrimeNG override sheets. Aura lives in the `primeng` CSS layer,
+   so rules here win by spec without `!important`. Add one sheet per component
+   (e.g. `table.scss`) and @import it below — don't sprinkle overrides in
+   component styles or templates. */
