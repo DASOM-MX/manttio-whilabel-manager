@@ -9,16 +9,11 @@ import { TabsModule } from 'primeng/tabs';
 import { TagModule } from 'primeng/tag';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
-import { BillingRecordStatus } from '../../core/models/billing-record';
-import {
-  PAYMENT_TYPE_LABELS,
-  PaymentType,
-  REGIMEN_FISCAL_LABELS,
-  RegimenFiscal,
-  USO_CFDI_LABELS,
-  UsoCfdi,
-} from '../../core/models/tenant';
-import { billingRecordStatusSeverity, statusSeverity } from '../../data/utils';
+import { BillingStatusSeverityPipe } from '../../pipes/billing-status-severity-pipe';
+import { PaymentTypeLabelPipe } from '../../pipes/payment-type-label-pipe';
+import { RegimenFiscalLabelPipe } from '../../pipes/regimen-fiscal-label-pipe';
+import { StatusSeverityPipe } from '../../pipes/status-severity-pipe';
+import { UsoCfdiLabelPipe } from '../../pipes/uso-cfdi-label-pipe';
 import { SetTenantStatus } from '../../state/tenants/tenants.actions';
 import { TenantsState } from '../../state/tenants/tenants.state';
 
@@ -39,6 +34,11 @@ interface InstanceClient {
     TabsModule,
     TagModule,
     ToggleSwitchModule,
+    BillingStatusSeverityPipe,
+    PaymentTypeLabelPipe,
+    RegimenFiscalLabelPipe,
+    StatusSeverityPipe,
+    UsoCfdiLabelPipe,
   ],
   templateUrl: './tenant-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,8 +60,6 @@ export class TenantDetail {
       .filter((record) => record.env_id === tenant.env_id)
       .sort((a, b) => b.issued_at.localeCompare(a.issued_at));
   });
-
-  protected readonly statusSeverity = statusSeverity;
 
   /** Start / stop switch — drives the manager-backend KV status write. */
   protected readonly statusControl = new FormControl(false, { nonNullable: true });
@@ -85,21 +83,5 @@ export class TenantDetail {
       if (!tenant) return;
       this.statusControl.setValue(tenant.status === 'active', { emitEvent: false });
     });
-  }
-
-  protected paymentTypeLabel(type: PaymentType): string {
-    return PAYMENT_TYPE_LABELS[type];
-  }
-
-  protected regimenFiscalLabel(regimen: RegimenFiscal): string {
-    return REGIMEN_FISCAL_LABELS[regimen];
-  }
-
-  protected usoCfdiLabel(uso: UsoCfdi): string {
-    return USO_CFDI_LABELS[uso];
-  }
-
-  protected recordStatusSeverity(status: BillingRecordStatus): 'success' | 'warn' | 'danger' {
-    return billingRecordStatusSeverity(status);
   }
 }

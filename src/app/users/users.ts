@@ -3,12 +3,13 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 
-import { InternalUser, Role } from '../core/models/session';
+import { InternalUser } from '../core/models/session';
+import { RoleSeverityPipe } from '../pipes/role-severity-pipe';
 import { RegisterUserDrawer } from './components/register-user-drawer/register-user-drawer';
 
 @Component({
   selector: 'app-users',
-  imports: [DatePipe, TitleCasePipe, TableModule, TagModule, RegisterUserDrawer],
+  imports: [DatePipe, TitleCasePipe, TableModule, TagModule, RegisterUserDrawer, RoleSeverityPipe],
   templateUrl: './users.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -31,9 +32,5 @@ export class Users {
 
   protected onRegistered(user: InternalUser): void {
     this.users.update((users) => [...users, user]);
-  }
-
-  protected roleSeverity(role: Role): 'info' | 'secondary' {
-    return role === 'superadmin' ? 'info' : 'secondary';
   }
 }

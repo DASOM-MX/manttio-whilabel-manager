@@ -45,7 +45,7 @@
             }
           </td>
           <td>
-            <p-tag [value]="tenant.status" [severity]="statusSeverity(tenant.status)" />
+            <p-tag [value]="tenant.status" [severity]="tenant.status | statusSeverity" />
           </td>
         </tr>
       </ng-template>

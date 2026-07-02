@@ -9,7 +9,7 @@
           <h1 class="text-2xl font-semibold text-surface-950 dark:text-surface-50">
             {{ t.public_name }}
           </h1>
-          <p-tag [value]="t.status" [severity]="statusSeverity(t.status)" />
+          <p-tag [value]="t.status" [severity]="t.status | statusSeverity" />
         </div>
         <p class="font-mono text-sm text-surface-500 dark:text-surface-400">{{ t.slug }}</p>
       </div>
@@ -82,11 +82,11 @@
                   </div>
                   <div>
                     <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">Régimen fiscal</dt>
-                    <dd class="mt-1 text-sm text-surface-900 dark:text-surface-100">{{ regimenFiscalLabel(tax.regimen_fiscal) }}</dd>
+                    <dd class="mt-1 text-sm text-surface-900 dark:text-surface-100">{{ tax.regimen_fiscal | regimenFiscalLabel }}</dd>
                   </div>
                   <div>
                     <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">Uso CFDI</dt>
-                    <dd class="mt-1 text-sm text-surface-900 dark:text-surface-100">{{ usoCfdiLabel(tax.uso_cfdi) }}</dd>
+                    <dd class="mt-1 text-sm text-surface-900 dark:text-surface-100">{{ tax.uso_cfdi | usoCfdiLabel }}</dd>
                   </div>
                   <div>
                     <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">Código postal</dt>
@@ -180,9 +180,9 @@
                     {{ record.amount | currency: 'MXN' : 'symbol-narrow' : '1.0-0' }}
                     <span class="text-surface-500 dark:text-surface-400">{{ record.currency }}</span>
                   </td>
-                  <td class="text-sm">{{ paymentTypeLabel(record.payment_type) }}</td>
+                  <td class="text-sm">{{ record.payment_type | paymentTypeLabel }}</td>
                   <td>
-                    <p-tag [value]="record.status" [severity]="recordStatusSeverity(record.status)" />
+                    <p-tag [value]="record.status" [severity]="record.status | billingStatusSeverity" />
                   </td>
                   <td class="text-sm">{{ record.issued_at | date: 'MMM d, y' }}</td>
                   <td class="text-sm">

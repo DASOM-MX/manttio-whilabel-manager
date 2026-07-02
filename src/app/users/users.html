@@ -27,7 +27,7 @@
           <td class="text-sm font-medium">{{ user.name }}</td>
           <td class="text-sm">{{ user.email }}</td>
           <td>
-            <p-tag [value]="user.role | titlecase" [severity]="roleSeverity(user.role)" />
+            <p-tag [value]="user.role | titlecase" [severity]="user.role | roleSeverity" />
           </td>
           <td class="text-sm">
             @if (user.last_login) {
