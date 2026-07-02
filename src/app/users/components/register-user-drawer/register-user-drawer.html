@@ -2,7 +2,7 @@
   [visible]="visible()"
   (visibleChange)="visible.set($event)"
   position="right"
-  styleClass="!w-full sm:!w-96"
+  styleClass="!w-full !max-w-1/2 sm:!w-96"
   header="Register user"
 >
   <form class="flex h-full flex-col gap-5" [formGroup]="form" (ngSubmit)="submit()">

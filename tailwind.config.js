@@ -7,6 +7,10 @@ module.exports = {
       fontFamily: {
         sans: ['Lexend', 'system-ui', 'sans-serif'],
       },
+      maxWidth: {
+        // Cap for the register drawers: never more than half the viewport.
+        '1/2': '50%',
+      },
       colors: {
         // Brand blue (AdminKit-style primary)
         primary: {

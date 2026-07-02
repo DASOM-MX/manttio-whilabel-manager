@@ -1,29 +1,25 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import {
-  FormControl,
-  NonNullableFormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { select, Store } from '@ngxs/store';
-import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TabsModule } from 'primeng/tabs';
 import { TagModule } from 'primeng/tag';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
+import { BillingRecordStatus } from '../../core/models/billing-record';
 import {
-  PAYMENT_TYPE_OPTIONS,
+  PAYMENT_TYPE_LABELS,
   PaymentType,
-  Plan,
-  PLAN_OPTIONS,
-  PLAN_PRICING,
+  REGIMEN_FISCAL_LABELS,
+  RegimenFiscal,
+  USO_CFDI_LABELS,
+  UsoCfdi,
 } from '../../core/models/tenant';
-import { statusSeverity } from '../../data/utils';
-import { SetTenantStatus, UpdateTenantBilling } from '../../state/tenants/tenants.actions';
+import { billingRecordStatusSeverity, statusSeverity } from '../../data/utils';
+import { SetTenantStatus } from '../../state/tenants/tenants.actions';
 import { TenantsState } from '../../state/tenants/tenants.state';
 
 interface InstanceClient {
@@ -39,7 +35,6 @@ interface InstanceClient {
     DatePipe,
     ReactiveFormsModule,
     RouterLink,
-    SelectModule,
     TableModule,
     TabsModule,
     TagModule,
@@ -52,31 +47,24 @@ export class TenantDetail {
   readonly slug = input.required<string>();
 
   private readonly store = inject(Store);
-  private readonly fb = inject(NonNullableFormBuilder);
   private readonly tenants = select(TenantsState.tenants);
+  private readonly allBillingRecords = select(TenantsState.billingRecords);
 
   protected readonly tenant = computed(
     () => this.tenants().find((t) => t.slug === this.slug()) ?? null,
   );
+  protected readonly billingRecords = computed(() => {
+    const tenant = this.tenant();
+    if (!tenant) return [];
+    return this.allBillingRecords()
+      .filter((record) => record.env_id === tenant.env_id)
+      .sort((a, b) => b.issued_at.localeCompare(a.issued_at));
+  });
+
   protected readonly statusSeverity = statusSeverity;
 
   /** Start / stop switch — drives the manager-backend KV status write. */
   protected readonly statusControl = new FormControl(false, { nonNullable: true });
-
-  protected readonly paymentTypeOptions = PAYMENT_TYPE_OPTIONS;
-  protected readonly planOptions = PLAN_OPTIONS;
-
-  protected readonly billingForm = this.fb.group({
-    plan: [Plan.Monthly, Validators.required],
-    billing_email: ['', [Validators.required, Validators.email]],
-    payment_type: [PaymentType.BankTransfer, Validators.required],
-    notes: [''],
-  });
-
-  private readonly selectedPlan = toSignal(this.billingForm.controls.plan.valueChanges, {
-    initialValue: this.billingForm.controls.plan.value,
-  });
-  protected readonly selectedPlanPricing = computed(() => PLAN_PRICING[this.selectedPlan()]);
 
   // Placeholder until the manager backend proxies per-instance client lists.
   protected readonly clients: InstanceClient[] = [
@@ -84,8 +72,6 @@ export class TenantDetail {
     { name: 'Marco Ruiz', email: 'marco@example.com', created_at: '2026-04-02T16:45:00Z' },
     { name: 'Dana Whitfield', email: 'dana@example.com', created_at: '2026-05-21T08:05:00Z' },
   ];
-
-  private lastEnvId: string | null = null;
 
   constructor() {
     this.statusControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((active) => {
@@ -98,19 +84,22 @@ export class TenantDetail {
       const tenant = this.tenant();
       if (!tenant) return;
       this.statusControl.setValue(tenant.status === 'active', { emitEvent: false });
-      // Only reseed the billing form when the tenant itself changes, so a
-      // status flip doesn't clobber unsaved billing edits.
-      if (tenant.env_id !== this.lastEnvId) {
-        this.lastEnvId = tenant.env_id;
-        this.billingForm.reset(tenant.billing);
-      }
     });
   }
 
-  protected saveBilling(): void {
-    const tenant = this.tenant();
-    if (!tenant) return;
-    this.store.dispatch(new UpdateTenantBilling(tenant.env_id, this.billingForm.getRawValue()));
-    this.billingForm.markAsPristine();
+  protected paymentTypeLabel(type: PaymentType): string {
+    return PAYMENT_TYPE_LABELS[type];
+  }
+
+  protected regimenFiscalLabel(regimen: RegimenFiscal): string {
+    return REGIMEN_FISCAL_LABELS[regimen];
+  }
+
+  protected usoCfdiLabel(uso: UsoCfdi): string {
+    return USO_CFDI_LABELS[uso];
+  }
+
+  protected recordStatusSeverity(status: BillingRecordStatus): 'success' | 'warn' | 'danger' {
+    return billingRecordStatusSeverity(status);
   }
 }

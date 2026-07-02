@@ -46,6 +46,43 @@ export const PLAN_PRICING: Record<Plan, PlanPricing> = {
   [Plan.Monthly]: { price: 375, currency: 'MXN', recurrence: 'monthly' },
 };
 
+/** SAT régimen fiscal codes we invoice against (extend as tenants need more). */
+export enum RegimenFiscal {
+  PersonasMorales = '601',
+  ActividadEmpresarial = '612',
+  Resico = '626',
+}
+
+export const REGIMEN_FISCAL_LABELS: Record<RegimenFiscal, string> = {
+  [RegimenFiscal.PersonasMorales]: '601 — General de Ley Personas Morales',
+  [RegimenFiscal.ActividadEmpresarial]:
+    '612 — Personas Físicas con Actividades Empresariales y Profesionales',
+  [RegimenFiscal.Resico]: '626 — Régimen Simplificado de Confianza',
+};
+
+/** CFDI 4.0 uso codes we track (extend as tenants need more). */
+export enum UsoCfdi {
+  AdquisicionMercancias = 'G01',
+  GastosGenerales = 'G03',
+  SinEfectosFiscales = 'S01',
+}
+
+export const USO_CFDI_LABELS: Record<UsoCfdi, string> = {
+  [UsoCfdi.AdquisicionMercancias]: 'G01 — Adquisición de mercancías',
+  [UsoCfdi.GastosGenerales]: 'G03 — Gastos en general',
+  [UsoCfdi.SinEfectosFiscales]: 'S01 — Sin efectos fiscales',
+};
+
+/** Mexican tax (CFDI) data used to invoice the tenant — reference only. */
+export interface TenantTaxInfo {
+  rfc: string;
+  razon_social: string;
+  regimen_fiscal: RegimenFiscal;
+  uso_cfdi: UsoCfdi;
+  /** Domicilio fiscal postal code, as registered with SAT. */
+  postal_code: string;
+}
+
 /** Admin-side billing tracking fields (reference only — no payment processing here). */
 export interface TenantBilling {
   plan: Plan;
@@ -65,4 +102,6 @@ export interface Tenant {
   neon_project_ref: string;
   last_push_at: string | null;
   billing: TenantBilling;
+  /** Null until the tenant hands over their fiscal data. */
+  tax_info: TenantTaxInfo | null;
 }

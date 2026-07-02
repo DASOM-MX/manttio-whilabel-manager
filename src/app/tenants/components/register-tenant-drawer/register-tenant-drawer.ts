@@ -47,6 +47,8 @@ export class RegisterTenantDrawer {
         payment_type: PaymentType.BankTransfer,
         notes: '',
       },
+      // Fiscal data is collected from the tenant later.
+      tax_info: null,
     };
     this.store.dispatch(new RegisterTenant(tenant));
     this.visible.set(false);
