@@ -10,6 +10,7 @@ import {
   UsoCfdi,
 } from '../../core/models/tenant';
 import {
+  RegisterBillingRecord,
   RegisterTenant,
   SelectTenant,
   SetTenantStatus,
@@ -227,6 +228,12 @@ export class TenantsState {
         .getState()
         .tenants.map((t) => (t.env_id === envId ? { ...t, status } : t)),
     });
+  }
+
+  @Action(RegisterBillingRecord)
+  registerBillingRecord(ctx: StateContext<TenantsStateModel>, { record }: RegisterBillingRecord) {
+    // TODO: persist via the manager backend and append on success.
+    ctx.patchState({ billingRecords: [...ctx.getState().billingRecords, record] });
   }
 
   @Action(UpdateTenantBilling)

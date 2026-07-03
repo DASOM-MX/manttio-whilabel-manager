@@ -1,3 +1,4 @@
+import { BillingRecord } from '../../core/models/billing-record';
 import { Tenant, TenantBilling, TenantStatus } from '../../core/models/tenant';
 
 export class RegisterTenant {
@@ -25,4 +26,9 @@ export class UpdateTenantBilling {
     readonly envId: string,
     readonly billing: TenantBilling,
   ) {}
+}
+
+export class RegisterBillingRecord {
+  static readonly type = '[Tenants] Register Billing Record';
+  constructor(readonly record: BillingRecord) {}
 }

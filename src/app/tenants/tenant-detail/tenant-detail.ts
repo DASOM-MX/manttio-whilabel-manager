@@ -10,6 +10,7 @@ import { TagModule } from 'primeng/tag';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 import { BillingStatusSeverityPipe } from '../../pipes/billing-status-severity-pipe';
+import { RegisterBillingRecordDrawer } from '../components/register-billing-record-drawer/register-billing-record-drawer';
 import { PaymentTypeLabelPipe } from '../../pipes/payment-type-label-pipe';
 import { RegimenFiscalLabelPipe } from '../../pipes/regimen-fiscal-label-pipe';
 import { StatusSeverityPipe } from '../../pipes/status-severity-pipe';
@@ -34,6 +35,7 @@ interface InstanceClient {
     TabsModule,
     TagModule,
     ToggleSwitchModule,
+    RegisterBillingRecordDrawer,
     BillingStatusSeverityPipe,
     PaymentTypeLabelPipe,
     RegimenFiscalLabelPipe,

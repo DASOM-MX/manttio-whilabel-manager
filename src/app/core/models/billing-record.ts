@@ -8,6 +8,10 @@ export const BILLING_RECORD_STATUS_LABELS: Record<BillingRecordStatus, string> =
   overdue: 'Overdue',
 };
 
+export const BILLING_RECORD_STATUS_OPTIONS = Object.entries(BILLING_RECORD_STATUS_LABELS).map(
+  ([value, label]) => ({ value: value as BillingRecordStatus, label }),
+);
+
 /** A single payment/charge tracked against a tenant — admin-side reference only. */
 export interface BillingRecord {
   id: string;

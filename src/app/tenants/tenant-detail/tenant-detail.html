@@ -155,11 +155,17 @@
 
         <p-tabpanel value="billing">
           <div class="card mt-6 overflow-hidden">
-            <div class="card-section">
-              <h2 class="font-semibold text-surface-950 dark:text-surface-50">Billing records</h2>
-              <p class="text-sm text-surface-500 dark:text-surface-400">
-                Payment history tracked for this tenant — admin-side reference only.
-              </p>
+            <div class="card-section flex items-end justify-between gap-4">
+              <div>
+                <h2 class="font-semibold text-surface-950 dark:text-surface-50">Billing records</h2>
+                <p class="text-sm text-surface-500 dark:text-surface-400">
+                  Payment history tracked for this tenant — admin-side reference only.
+                </p>
+              </div>
+              <button class="btn-primary" type="button" (click)="recordDrawer.open(t.env_id)">
+                <i class="pi pi-plus"></i>
+                Register
+              </button>
             </div>
             <p-table [value]="billingRecords()" dataKey="id">
               <ng-template #header>
@@ -210,6 +216,8 @@
       </p-tabpanels>
     </p-tabs>
   </div>
+
+  <app-register-billing-record-drawer #recordDrawer />
 } @else {
   <div class="card p-10 text-center">
     <p class="text-surface-600 dark:text-surface-300">
