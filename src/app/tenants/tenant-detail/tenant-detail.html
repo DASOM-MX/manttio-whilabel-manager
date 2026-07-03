@@ -1,0 +1,228 @@
+@if (tenant(); as t) {
+  <div class="space-y-6">
+    <div class="flex items-center gap-4">
+      <a routerLink="/tenants" class="btn-neutral !h-9 !px-3" aria-label="Back to tenants">
+        <i class="pi pi-arrow-left"></i>
+      </a>
+      <div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl font-semibold text-surface-950 dark:text-surface-50">
+            {{ t.public_name }}
+          </h1>
+          <p-tag [value]="t.status" [severity]="t.status | statusSeverity" />
+        </div>
+        <p class="font-mono text-sm text-surface-500 dark:text-surface-400">{{ t.slug }}</p>
+      </div>
+    </div>
+
+    <p-tabs value="details">
+      <p-tablist>
+        <p-tab value="details">Details</p-tab>
+        <p-tab value="clients">Clients</p-tab>
+        <p-tab value="billing">Billing</p-tab>
+      </p-tablist>
+      <p-tabpanels class="!bg-transparent !p-0">
+        <p-tabpanel value="details">
+          <div class="grid grid-cols-1 gap-6 pt-6 xl:grid-cols-3">
+            <div class="space-y-6 xl:col-span-2">
+            <div class="card">
+              <div class="card-section">
+                <h2 class="font-semibold text-surface-950 dark:text-surface-50">Registry</h2>
+              </div>
+              <dl class="card-section grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">Env ID</dt>
+                  <dd class="mt-1 font-mono text-sm text-surface-900 dark:text-surface-100">{{ t.env_id }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">Slug</dt>
+                  <dd class="mt-1 font-mono text-sm text-surface-900 dark:text-surface-100">{{ t.slug }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">Public name</dt>
+                  <dd class="mt-1 text-sm text-surface-900 dark:text-surface-100">{{ t.public_name }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">API base URL</dt>
+                  <dd class="mt-1 text-sm text-surface-900 dark:text-surface-100">{{ t.api_base_url }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">Neon project</dt>
+                  <dd class="mt-1 font-mono text-sm text-surface-900 dark:text-surface-100">{{ t.neon_project_ref }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">Last push</dt>
+                  <dd class="mt-1 text-sm text-surface-900 dark:text-surface-100">
+                    @if (t.last_push_at) {
+                      {{ t.last_push_at | date: 'MMM d, y HH:mm' }}
+                    } @else {
+                      —
+                    }
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="card">
+              <div class="card-section">
+                <h2 class="font-semibold text-surface-950 dark:text-surface-50">Tax information</h2>
+                <p class="text-sm text-surface-500 dark:text-surface-400">
+                  CFDI data used to invoice this tenant.
+                </p>
+              </div>
+              @if (t.tax_info; as tax) {
+                <dl class="card-section grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
+                  <div>
+                    <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">RFC</dt>
+                    <dd class="mt-1 font-mono text-sm text-surface-900 dark:text-surface-100">{{ tax.rfc }}</dd>
+                  </div>
+                  <div>
+                    <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">Razón social</dt>
+                    <dd class="mt-1 text-sm text-surface-900 dark:text-surface-100">{{ tax.razon_social }}</dd>
+                  </div>
+                  <div>
+                    <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">Régimen fiscal</dt>
+                    <dd class="mt-1 text-sm text-surface-900 dark:text-surface-100">{{ tax.regimen_fiscal | regimenFiscalLabel }}</dd>
+                  </div>
+                  <div>
+                    <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">Uso CFDI</dt>
+                    <dd class="mt-1 text-sm text-surface-900 dark:text-surface-100">{{ tax.uso_cfdi | usoCfdiLabel }}</dd>
+                  </div>
+                  <div>
+                    <dt class="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">Código postal</dt>
+                    <dd class="mt-1 font-mono text-sm text-surface-900 dark:text-surface-100">{{ tax.postal_code }}</dd>
+                  </div>
+                </dl>
+              } @else {
+                <div class="card-section">
+                  <p class="text-sm text-surface-500 dark:text-surface-400">
+                    No tax information on file yet.
+                  </p>
+                </div>
+              }
+            </div>
+            </div>
+
+            <div class="card self-start">
+              <div class="card-section">
+                <h2 class="font-semibold text-surface-950 dark:text-surface-50">Instance state</h2>
+              </div>
+              <div class="card-section space-y-3">
+                <div class="flex items-center justify-between gap-4">
+                  <span class="text-sm font-medium text-surface-800 dark:text-surface-200">
+                    @if (statusControl.value) {
+                      Running
+                    } @else {
+                      Stopped
+                    }
+                  </span>
+                  <p-toggleswitch [formControl]="statusControl" />
+                </div>
+                <p class="text-sm text-surface-500 dark:text-surface-400">
+                  Stopping the instance writes <span class="font-mono">status=suspended</span> to the
+                  edge KV through the manager backend; visitors get the suspended page immediately.
+                </p>
+              </div>
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="clients">
+          <div class="card mt-6 overflow-hidden">
+            <p-table [value]="clients" dataKey="email">
+              <ng-template #header>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Created</th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-client>
+                <tr>
+                  <td class="text-sm font-medium">{{ client.name }}</td>
+                  <td class="text-sm">{{ client.email }}</td>
+                  <td class="text-sm">{{ client.created_at | date: 'MMM d, y' }}</td>
+                </tr>
+              </ng-template>
+              <ng-template #emptymessage>
+                <tr>
+                  <td colspan="3" class="py-8 text-center text-surface-500">No clients yet.</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="billing">
+          <div class="card mt-6 overflow-hidden">
+            <div class="card-section flex items-end justify-between gap-4">
+              <div>
+                <h2 class="font-semibold text-surface-950 dark:text-surface-50">Billing records</h2>
+                <p class="text-sm text-surface-500 dark:text-surface-400">
+                  Payment history tracked for this tenant — admin-side reference only.
+                </p>
+              </div>
+              <button class="btn-primary" type="button" (click)="recordDrawer.open(t.env_id)">
+                <i class="pi pi-plus"></i>
+                Register
+              </button>
+            </div>
+            <p-table [value]="billingRecords()" dataKey="id">
+              <ng-template #header>
+                <tr>
+                  <th>Concept</th>
+                  <th>Amount</th>
+                  <th>Payment type</th>
+                  <th>Status</th>
+                  <th>Issued</th>
+                  <th>Paid</th>
+                  <th>CFDI folio</th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-record>
+                <tr>
+                  <td class="text-sm font-medium">{{ record.concept }}</td>
+                  <td class="text-sm">
+                    {{ record.amount | currency: 'MXN' : 'symbol-narrow' : '1.0-0' }}
+                    <span class="text-surface-500 dark:text-surface-400">{{ record.currency }}</span>
+                  </td>
+                  <td class="text-sm">{{ record.payment_type | paymentTypeLabel }}</td>
+                  <td>
+                    <p-tag [value]="record.status" [severity]="record.status | billingStatusSeverity" />
+                  </td>
+                  <td class="text-sm">{{ record.issued_at | date: 'MMM d, y' }}</td>
+                  <td class="text-sm">
+                    @if (record.paid_at) {
+                      {{ record.paid_at | date: 'MMM d, y' }}
+                    } @else {
+                      —
+                    }
+                  </td>
+                  <td class="max-w-40 truncate font-mono text-xs text-surface-500 dark:text-surface-400">
+                    {{ record.cfdi_folio || '—' }}
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template #emptymessage>
+                <tr>
+                  <td colspan="7" class="py-8 text-center text-surface-500">
+                    No billing records for this tenant yet.
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+
+  <app-register-billing-record-drawer #recordDrawer />
+} @else {
+  <div class="card p-10 text-center">
+    <p class="text-surface-600 dark:text-surface-300">
+      No tenant with slug <span class="font-mono">{{ slug() }}</span> in the registry.
+    </p>
+    <a routerLink="/tenants" class="btn-secondary mt-4">Back to tenants</a>
+  </div>
+}

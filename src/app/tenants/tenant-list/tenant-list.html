@@ -1,0 +1,61 @@
+<div class="space-y-6">
+  <div class="flex items-end justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-semibold text-surface-950 dark:text-surface-50">Tenants</h1>
+      <p class="text-sm text-surface-500 dark:text-surface-400">
+        Whitelabel instance registry · {{ tenants().length }} tenants
+      </p>
+    </div>
+    <button class="btn-primary" type="button" (click)="registerDrawer.open()">
+      <i class="pi pi-plus"></i>
+      Register
+    </button>
+  </div>
+
+  <div class="card overflow-hidden">
+    <p-table [value]="tenants()" dataKey="env_id" [paginator]="true" [rows]="10">
+      <ng-template #header>
+        <tr>
+          <th>Tenant</th>
+          <th>Env ID</th>
+          <th>API base URL</th>
+          <th>Neon project</th>
+          <th>Last push</th>
+          <th>Status</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-tenant>
+        <tr>
+          <td>
+            <a
+              [routerLink]="['/tenants', tenant.slug]"
+              class="font-medium text-primary-600 hover:underline dark:text-primary-300"
+            >
+              {{ tenant.public_name }}
+            </a>
+          </td>
+          <td class="font-mono text-sm">{{ tenant.env_id }}</td>
+          <td class="text-sm">{{ tenant.api_base_url }}</td>
+          <td class="font-mono text-sm">{{ tenant.neon_project_ref }}</td>
+          <td class="text-sm">
+            @if (tenant.last_push_at) {
+              {{ tenant.last_push_at | date: 'MMM d, y HH:mm' }}
+            } @else {
+              —
+            }
+          </td>
+          <td>
+            <p-tag [value]="tenant.status" [severity]="tenant.status | statusSeverity" />
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="6" class="py-8 text-center text-surface-500">No tenants registered yet.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<app-register-tenant-drawer #registerDrawer />

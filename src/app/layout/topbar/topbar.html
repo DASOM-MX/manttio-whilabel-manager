@@ -1,0 +1,35 @@
+<header class="flex h-16 shrink-0 items-center gap-4 border-b border-surface-200 bg-white px-6 dark:border-surface-700 dark:bg-surface-900">
+  <p-select
+    class="w-64"
+    size="small"
+    [options]="tenants()"
+    optionLabel="public_name"
+    optionValue="env_id"
+    [formControl]="tenantControl"
+    placeholder="All tenants"
+    [showClear]="true"
+    [filter]="true"
+    filterBy="public_name,slug"
+  />
+
+  <div class="relative hidden max-w-md flex-1 md:block">
+    <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-surface-400"></i>
+    <input pInputText pSize="small" type="text" placeholder="Search…" class="w-full !pl-9" />
+  </div>
+
+  <div class="ml-auto flex items-center gap-3">
+    <button
+      type="button"
+      class="flex size-9 items-center justify-center rounded-full text-surface-500 transition-colors hover:bg-surface-100 dark:text-surface-300 dark:hover:bg-surface-800"
+      (click)="toggleDarkMode()"
+      aria-label="Toggle dark mode"
+    >
+      <i class="pi" [class.pi-moon]="!darkMode()" [class.pi-sun]="darkMode()"></i>
+    </button>
+    <p-avatar [label]="userInitials()" shape="circle" styleClass="!bg-primary !text-white" />
+    <div class="hidden text-sm leading-tight sm:block">
+      <p class="font-medium text-surface-900 dark:text-surface-100">{{ user().name }}</p>
+      <p class="text-xs capitalize text-surface-500 dark:text-surface-400">{{ user().role }}</p>
+    </div>
+  </div>
+</header>

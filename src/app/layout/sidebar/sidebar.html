@@ -1,0 +1,28 @@
+<aside class="flex h-full w-64 shrink-0 flex-col bg-surface-900">
+  <a routerLink="/dashboard" class="flex items-center gap-2.5 px-6 py-5 text-lg font-semibold text-white">
+    <i class="pi pi-th-large text-primary-400"></i>
+    <span>manttio<span class="font-light text-surface-300">manager</span></span>
+  </a>
+
+  <nav class="flex-1 overflow-y-auto py-4">
+    <p class="px-6 pb-2 text-xs font-semibold uppercase tracking-wider text-surface-500">Fleet</p>
+    <ul>
+      @for (item of navItems(); track item.route) {
+        <li>
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="!border-primary-400 bg-surface-800 !text-white"
+            class="flex items-center gap-3 border-l-2 border-transparent px-6 py-2.5 text-sm text-surface-300 transition-colors hover:bg-surface-800 hover:text-white"
+          >
+            <i [class]="item.icon"></i>
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <div class="border-t border-surface-800 px-6 py-4 text-xs text-surface-500">
+    internal · v0.1.0
+  </div>
+</aside>

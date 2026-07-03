@@ -1,0 +1,51 @@
+<div class="space-y-6">
+  <div class="flex items-end justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-semibold text-surface-950 dark:text-surface-50">Blacklist</h1>
+      <p class="text-sm text-surface-500 dark:text-surface-400">
+        Emails and domains blocked from signing up on any instance.
+      </p>
+    </div>
+    <button class="btn-primary" type="button" (click)="registerDrawer.open()">
+      <i class="pi pi-plus"></i>
+      Register
+    </button>
+  </div>
+
+  <div class="card overflow-hidden">
+    <p-table [value]="entries()" dataKey="value">
+      <ng-template #header>
+        <tr>
+          <th>Value</th>
+          <th>Reason</th>
+          <th>Added</th>
+          <th class="w-20"></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-entry>
+        <tr>
+          <td class="font-mono text-sm">{{ entry.value }}</td>
+          <td class="text-sm">{{ entry.reason || '—' }}</td>
+          <td class="text-sm">{{ entry.added_at | date: 'MMM d, y' }}</td>
+          <td>
+            <button
+              class="btn-danger !h-9 !px-3"
+              type="button"
+              (click)="removeEntry(entry.value)"
+              [attr.aria-label]="'Remove ' + entry.value"
+            >
+              <i class="pi pi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="4" class="py-8 text-center text-surface-500">Blacklist is empty.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<app-register-blacklist-drawer #registerDrawer (registered)="onRegistered($event)" />

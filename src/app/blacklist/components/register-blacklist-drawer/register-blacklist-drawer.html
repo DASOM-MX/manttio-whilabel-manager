@@ -1,0 +1,29 @@
+<p-drawer
+  [visible]="visible()"
+  (visibleChange)="visible.set($event)"
+  position="right"
+  styleClass="!w-full !max-w-1/2 sm:!w-96"
+  header="Register blacklist entry"
+>
+  <form class="flex h-full flex-col gap-5" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="field-group">
+      <label class="field-label" for="register-blacklist-value">Email or domain</label>
+      <input
+        class="field-input"
+        id="register-blacklist-value"
+        type="text"
+        formControlName="value"
+        placeholder="user@example.com or example.com"
+      />
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="register-blacklist-reason">Reason</label>
+      <input class="field-input" id="register-blacklist-reason" type="text" formControlName="reason" />
+    </div>
+
+    <div class="mt-auto flex justify-end gap-3">
+      <button class="btn-neutral" type="button" (click)="visible.set(false)">Cancel</button>
+      <button class="btn-primary" type="submit" [disabled]="form.invalid">Register</button>
+    </div>
+  </form>
+</p-drawer>
