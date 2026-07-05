@@ -1,0 +1,12 @@
+name = "manttio-manager-backend"
+main = "src/index.ts"
+compatibility_date = "2026-07-01"
+
+# KV namespace for tenant status writes (`tenant:{envId}` -> { status }) —
+# uncomment and fill once the namespace is provisioned.
+# [[kv_namespaces]]
+# binding = "TENANT_STATUS"
+# id = ""
+
+# Shared instance-push token lives in a secret, never in code or the browser:
+#   wrangler secret put SHARED_INSTANCE_TOKEN
