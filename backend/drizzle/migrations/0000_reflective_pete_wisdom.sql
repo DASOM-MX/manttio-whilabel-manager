@@ -1,0 +1,20 @@
+CREATE TABLE "tenant_registry" (
+	"env_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"slug" text NOT NULL,
+	"public_name" text NOT NULL,
+	"api_base_url" text NOT NULL,
+	"neon_project_ref" text NOT NULL,
+	"status" text DEFAULT 'provisioning' NOT NULL,
+	"plan" text NOT NULL,
+	"billing_email" text NOT NULL,
+	"payment_type" text NOT NULL,
+	"billing_anchor" date NOT NULL,
+	"billing_notes" text,
+	"last_push_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "tenant_registry_slug_unique" UNIQUE("slug"),
+	CONSTRAINT "tenant_registry_status_check" CHECK ("tenant_registry"."status" in ('active', 'suspended', 'provisioning')),
+	CONSTRAINT "tenant_registry_plan_check" CHECK ("tenant_registry"."plan" in ('full', 'monthly')),
+	CONSTRAINT "tenant_registry_payment_type_check" CHECK ("tenant_registry"."payment_type" in ('bank_transfer', 'stripe', 'cash', 'bank_check'))
+);

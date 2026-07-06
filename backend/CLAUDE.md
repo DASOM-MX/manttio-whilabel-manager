@@ -7,7 +7,11 @@ The only holder of the **shared instance token**. Owns the tenant registry + bil
 - **Hono 4** on **Cloudflare Workers** (`wrangler dev` / `wrangler deploy`), TypeScript strict, ESM.
 - Validation with **zod** via `@hono/zod-validator` on every write endpoint.
 - **pnpm** (not npm) — matches the sibling `manttio-whitelabeled/backend`.
-- DB layer when it lands: **Drizzle + Neon serverless**, same as the sibling backend.
+- **Drizzle + Neon serverless** (WebSocket driver via `createDb` in `modules/database/client.ts` —
+  real transactions). Schema barrel + all `relations()` in `modules/database/schema.ts`; tables in
+  each module's `models/*.model.ts`. Migrations: `pnpm db:generate` / `db:migrate` (drizzle-kit,
+  reads `DATABASE_URL` from `.dev.vars` — copy `.dev.vars.example`; the manager has its **own**
+  Neon DB, never the sibling's). Dev fixtures: `pnpm seed:tenants`.
 - Outbound email via **Resend** (fetch wrapper, no SDK): billing-due reminders (daily cron
   sweep + manual re-send) and instance setup-info emails, sent to `tenant_registry.billing_email`
   only — never to end customers, never containing tokens or `neon_project_ref`.

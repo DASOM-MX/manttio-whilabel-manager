@@ -1,0 +1,6 @@
+# Copy to `.dev.vars` (gitignored) for `wrangler dev` + drizzle-kit + seed scripts.
+# Production values are Worker secrets: `wrangler secret put <NAME>`.
+
+# Neon Postgres connection string for the MANAGER's own database
+# (not a tenant DB, not the sibling manttio-whitelabeled DB).
+DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
