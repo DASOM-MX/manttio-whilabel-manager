@@ -8,6 +8,13 @@
       "when": 1783314076653,
       "tag": "0000_reflective_pete_wisdom",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1783314629771,
+      "tag": "0001_spooky_daimon_hellstrom",
+      "breakpoints": true
     }
   ]
 }

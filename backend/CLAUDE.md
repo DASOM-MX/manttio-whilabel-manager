@@ -6,6 +6,10 @@ The only holder of the **shared instance token**. Owns the tenant registry + bil
 ## Stack
 - **Hono 4** on **Cloudflare Workers** (`wrangler dev` / `wrangler deploy`), TypeScript strict, ESM.
 - Validation with **zod** via `@hono/zod-validator` on every write endpoint.
+- **Auth:** jose JWT HS256 (`sub` only — all superadmins equal, no role tiers), TTL 7d dev /
+  1d prod (fail-closed on unknown env), bcryptjs hashes. `jwtMiddleware` gates `/api/*`
+  except `/api/auth`. Registration is closed — bootstrap via `pnpm seed:admin <email>`
+  (password from `SEEDED_ADMIN_PASSWORD` in `.dev.vars`).
 - **pnpm** (not npm) — matches the sibling `manttio-whitelabeled/backend`.
 - **Drizzle + Neon serverless** (WebSocket driver via `createDb` in `modules/database/client.ts` —
   real transactions). Schema barrel + all `relations()` in `modules/database/schema.ts`; tables in
