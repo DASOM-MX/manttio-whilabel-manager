@@ -1,8 +1,10 @@
+import type { BillingReferenceRow } from '../../billing/types/billing.types';
+import { toTaxInfoDto } from '../../billing/helpers/billing-dto.helpers';
 import type { TenantRow } from '../types/tenants.types';
 
 // Serializes a registry row into the frontend's `Tenant` shape
 // (`frontend/src/app/core/models/tenant.ts`) — snake_case with a nested billing block.
-export const toTenantDto = (row: TenantRow) => ({
+export const toTenantDto = (row: TenantRow & { taxInfo?: BillingReferenceRow | null }) => ({
   env_id: row.envId,
   slug: row.slug,
   public_name: row.publicName,
@@ -16,8 +18,8 @@ export const toTenantDto = (row: TenantRow) => ({
     payment_type: row.paymentType,
     notes: row.billingNotes ?? '',
   },
-  // Joined from billing_reference once the billing phase lands.
-  tax_info: null,
+  // Null until the tenant hands over their fiscal data (billing_reference row).
+  tax_info: row.taxInfo ? toTaxInfoDto(row.taxInfo) : null,
 });
 
 export type TenantDto = ReturnType<typeof toTenantDto>;

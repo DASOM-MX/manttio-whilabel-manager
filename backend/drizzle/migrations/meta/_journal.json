@@ -15,6 +15,13 @@
       "when": 1783314629771,
       "tag": "0001_spooky_daimon_hellstrom",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783320990566,
+      "tag": "0002_soft_epoch",
+      "breakpoints": true
     }
   ]
 }

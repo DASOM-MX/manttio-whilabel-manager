@@ -3,8 +3,13 @@ import type { Db } from '../../database/client';
 import { tenantRegistry } from '../models/tenants.model';
 import type { NewTenant, TenantRow } from '../types/tenants.types';
 
+// List rows carry the joined billing_reference (via the barrel's taxInfo relation)
+// so the tenants screen gets tax data in one query.
 export const listTenants = async (db: Db) => {
-  return db.select().from(tenantRegistry).orderBy(desc(tenantRegistry.createdAt));
+  return db.query.tenantRegistry.findMany({
+    with: { taxInfo: true },
+    orderBy: desc(tenantRegistry.createdAt),
+  });
 };
 
 export const findTenantByEnvId = async (db: Db, envId: string) => {
