@@ -7,15 +7,18 @@ import { relations } from 'drizzle-orm';
 import { tenantRegistry } from '../tenants/models/tenants.model';
 import { billingReference } from '../billing/models/billing-reference.model';
 import { billingRecords } from '../billing/models/billing-records.model';
+import { contracts } from '../contracts/models/contracts.model';
 
 export { tenantRegistry } from '../tenants/models/tenants.model';
 export { admins } from '../auth/models/admins.model';
 export { billingReference } from '../billing/models/billing-reference.model';
 export { billingRecords } from '../billing/models/billing-records.model';
+export { contracts } from '../contracts/models/contracts.model';
 
 export const tenantRegistryRelations = relations(tenantRegistry, ({ one, many }) => ({
   taxInfo: one(billingReference),
   billingRecords: many(billingRecords),
+  contracts: many(contracts),
 }));
 
 export const billingReferenceRelations = relations(billingReference, ({ one }) => ({
@@ -28,6 +31,13 @@ export const billingReferenceRelations = relations(billingReference, ({ one }) =
 export const billingRecordsRelations = relations(billingRecords, ({ one }) => ({
   tenant: one(tenantRegistry, {
     fields: [billingRecords.envId],
+    references: [tenantRegistry.envId],
+  }),
+}));
+
+export const contractsRelations = relations(contracts, ({ one }) => ({
+  tenant: one(tenantRegistry, {
+    fields: [contracts.envId],
     references: [tenantRegistry.envId],
   }),
 }));
