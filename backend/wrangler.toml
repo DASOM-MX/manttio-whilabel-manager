@@ -5,10 +5,22 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 ENVIRONMENT = "dev"
+RESEND_FROM = "billing@manttio.com"
+BRAND_NAME = "Manttio"
+BRAND_SITE_URL = "https://manttio.com"
+BRAND_LOGO_URL = "https://manttio.com/brand/manttio-full.png"
+BRAND_PAYMENT_INSTRUCTIONS = "Realice su pago por el medio acordado y responda a este correo con el comprobante."
+
+# Daily billing sweep: auto-issue monthly cycle records, flip pending->overdue,
+# send due-soon/overdue reminders, expire lapsed contracts.
+# 15:00 UTC = 09:00 America/Monterrey.
+[triggers]
+crons = ["0 15 * * *"]
 
 # Secrets are set via `wrangler secret put` (prod) / `.dev.vars` (dev) and NOT declared here:
-#   DATABASE_URL   Neon Postgres connection string (the manager's own DB)
-#   JWT_SECRET     HS256 signing secret for jose
+#   DATABASE_URL     Neon Postgres connection string (the manager's own DB)
+#   JWT_SECRET       HS256 signing secret for jose
+#   RESEND_API_KEY   Resend API key for outbound billing/setup emails
 
 # KV namespace for tenant status writes (`tenant:{envId}` -> { status }) —
 # uncomment and fill once the namespace is provisioned.

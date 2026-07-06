@@ -1,4 +1,4 @@
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq, isNotNull, lt } from 'drizzle-orm';
 import type { Db } from '../../database/client';
 import { contracts } from '../models/contracts.model';
 import type { ContractRow, NewContract } from '../types/contracts.types';
@@ -20,6 +20,19 @@ export const insertContract = async (db: Db, input: NewContract): Promise<Contra
   const [row] = await db.insert(contracts).values(input).returning();
   if (!row) throw new Error('insertContract returned no row');
   return row;
+};
+
+// Cron helper: active contracts stay active through ends_at and expire the day
+// after. Monthly contracts have ends_at NULL and never lapse here.
+export const expireContractsPastEndsAt = async (db: Db, today: string): Promise<number> => {
+  const rows = await db
+    .update(contracts)
+    .set({ status: 'expired', updatedAt: new Date() })
+    .where(
+      and(eq(contracts.status, 'active'), isNotNull(contracts.endsAt), lt(contracts.endsAt, today)),
+    )
+    .returning({ id: contracts.id });
+  return rows.length;
 };
 
 export const updateContract = async (

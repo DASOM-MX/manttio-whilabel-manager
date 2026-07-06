@@ -10,3 +10,7 @@ JWT_SECRET=change-me
 
 # Password for `pnpm seed:admin <email> [name]` — only read by the seed script.
 SEEDED_ADMIN_PASSWORD=change-me
+
+# Resend API key for outbound billing/setup emails. A bogus value is fine if you
+# aren't testing email — sends fail and are logged, everything else still works.
+RESEND_API_KEY=re_change_me

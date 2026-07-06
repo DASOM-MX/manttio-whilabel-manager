@@ -3,12 +3,19 @@ export type Environment = 'production' | 'dev';
 export type Env = {
   DATABASE_URL: string;
   JWT_SECRET: string;
+  RESEND_API_KEY: string;
 
   ENVIRONMENT: Environment;
+  RESEND_FROM: string;
+  // Manttio brand strings for email chrome (manager emails are always
+  // manttio-branded — tenant branding never leaks into billing mail).
+  BRAND_NAME: string;
+  BRAND_SITE_URL: string;
+  BRAND_LOGO_URL: string;
+  // Free-text payment instructions block appended to billing reminders.
+  BRAND_PAYMENT_INSTRUCTIONS: string;
 
   // Wired in later phases (see architecture.md build order):
-  // RESEND_API_KEY: string;                // phase 5 — email
-  // RESEND_FROM: string;
   // TENANT_STATUS: KVNamespace;            // phase 6 — status control
   // SHARED_INSTANCE_TOKEN: string;         // phase 7 — config push
 };
