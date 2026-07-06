@@ -35,6 +35,19 @@ export const updateTenantPlan = async (db: Db, envId: string, plan: TenantRow['p
     .where(eq(tenantRegistry.envId, envId));
 };
 
+// Mirror write: registry.status follows KV (tenant-status.service is the only
+// caller — KV is the source of truth and wins on disagreement).
+export const updateTenantStatusMirror = async (
+  db: Db,
+  envId: string,
+  status: TenantRow['status'],
+) => {
+  await db
+    .update(tenantRegistry)
+    .set({ status, updatedAt: new Date() })
+    .where(eq(tenantRegistry.envId, envId));
+};
+
 export const insertTenant = async (db: Db, input: NewTenant): Promise<TenantRow> => {
   const [row] = await db.insert(tenantRegistry).values(input).returning();
   if (!row) throw new Error('insertTenant returned no row');

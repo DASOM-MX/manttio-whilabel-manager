@@ -22,11 +22,13 @@ crons = ["0 15 * * *"]
 #   JWT_SECRET       HS256 signing secret for jose
 #   RESEND_API_KEY   Resend API key for outbound billing/setup emails
 
-# KV namespace for tenant status writes (`tenant:{envId}` -> { status }) —
-# uncomment and fill once the namespace is provisioned.
-# [[kv_namespaces]]
-# binding = "TENANT_STATUS"
-# id = ""
+# KV namespace for tenant status writes (`tenant:{envId}` -> { status }).
+# The id below is a placeholder — local dev simulates KV so it doesn't matter,
+# but BEFORE DEPLOYING replace it with the real one from:
+#   wrangler kv namespace create TENANT_STATUS
+[[kv_namespaces]]
+binding = "TENANT_STATUS"
+id = "00000000000000000000000000000000"
 
 # Shared instance-push token lives in a secret, never in code or the browser:
 #   wrangler secret put SHARED_INSTANCE_TOKEN
