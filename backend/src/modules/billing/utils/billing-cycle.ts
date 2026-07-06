@@ -7,9 +7,9 @@ import type { Plan } from '../enums/billing.enum';
 /** Payment window for the one-time `full` invoice. */
 export const NET_30_DAYS = 30;
 
-const DAY_MS = 86_400_000;
+export const DAY_MS = 86_400_000;
 
-const toIsoDate = (d: Date): string => d.toISOString().slice(0, 10);
+export const toIsoDate = (d: Date): string => d.toISOString().slice(0, 10);
 
 // Anchor days 29–31 clamp to the last day of shorter months.
 const clampedUtcDate = (year: number, monthIndex: number, day: number): Date => {

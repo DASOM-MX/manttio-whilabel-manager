@@ -1,7 +1,12 @@
 import type { Db } from '../../database/client';
 import { isUniqueViolation } from '../../database/db-errors';
 import { findTenantByEnvId, updateTenantPlan } from '../../tenants/repository/tenants.repository';
-import { findContractById, insertContract, updateContract } from '../repository/contracts.repository';
+import {
+  expireContractsPastEndsAt,
+  findContractById,
+  insertContract,
+  updateContract,
+} from '../repository/contracts.repository';
 import { canTransition, endsAtFor } from '../utils/contract-lifecycle';
 import type { ContractRow } from '../types/contracts.types';
 import type { ContractStatus } from '../enums/contracts.enum';
@@ -27,6 +32,13 @@ export const createContract = async (
     documentUrl: input.document_url ?? null,
     notes: input.notes ?? null,
   });
+};
+
+// Cron step (scheduled handler): full-plan contracts past their 5-year ends_at
+// flip to expired. active → expired is a legal lifecycle transition; the plan
+// mirror is untouched because no new contract became active.
+export const expireLapsedContracts = async (db: Db): Promise<number> => {
+  return expireContractsPastEndsAt(db, todayIsoDate());
 };
 
 export type UpdateContractResult =

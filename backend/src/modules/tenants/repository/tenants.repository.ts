@@ -12,6 +12,11 @@ export const listTenants = async (db: Db) => {
   });
 };
 
+// Reminder-sweep helper: only `monthly` tenants are ever auto-issued.
+export const listTenantsByPlan = async (db: Db, plan: TenantRow['plan']) => {
+  return db.select().from(tenantRegistry).where(eq(tenantRegistry.plan, plan));
+};
+
 export const findTenantByEnvId = async (db: Db, envId: string) => {
   const rows = await db
     .select()
