@@ -23,6 +23,11 @@ export interface BillingRecord {
   payment_type: PaymentType;
   status: BillingRecordStatus;
   issued_at: string;
+  /**
+   * Payment deadline (`YYYY-MM-DD`) — always derived server-side from the tenant's
+   * plan (monthly → next billing-anchor day; full → issued + 30 days), never entered.
+   */
+  due_date: string;
   paid_at: string | null;
   /** CFDI folio fiscal (UUID) once invoiced, if any. */
   cfdi_folio: string | null;

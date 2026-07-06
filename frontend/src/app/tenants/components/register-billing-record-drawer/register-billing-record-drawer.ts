@@ -60,6 +60,9 @@ export class RegisterBillingRecordDrawer {
       payment_type,
       status,
       issued_at: now,
+      // Local placeholder — the manager backend derives the real due date from the
+      // tenant's plan once this dispatch hits POST /api/tenants/:envId/billing-records.
+      due_date: new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10),
       paid_at: status === 'paid' ? now : null,
       cfdi_folio: cfdi_folio.trim() || null,
     };
