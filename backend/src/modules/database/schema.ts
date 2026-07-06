@@ -6,3 +6,4 @@
 // (First relations arrive with billing_reference / billing_records / contracts.)
 
 export { tenantRegistry } from '../tenants/models/tenants.model';
+export { admins } from '../auth/models/admins.model';

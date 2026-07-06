@@ -1,12 +1,14 @@
 name = "manttio-manager-backend"
 main = "src/index.ts"
 compatibility_date = "2026-07-01"
+compatibility_flags = ["nodejs_compat"]
 
 [vars]
 ENVIRONMENT = "dev"
 
 # Secrets are set via `wrangler secret put` (prod) / `.dev.vars` (dev) and NOT declared here:
 #   DATABASE_URL   Neon Postgres connection string (the manager's own DB)
+#   JWT_SECRET     HS256 signing secret for jose
 
 # KV namespace for tenant status writes (`tenant:{envId}` -> { status }) —
 # uncomment and fill once the namespace is provisioned.

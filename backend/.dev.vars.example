@@ -4,3 +4,9 @@
 # Neon Postgres connection string for the MANAGER's own database
 # (not a tenant DB, not the sibling manttio-whitelabeled DB).
 DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
+
+# HS256 signing secret for auth JWTs (any long random string in dev).
+JWT_SECRET=change-me
+
+# Password for `pnpm seed:admin <email> [name]` — only read by the seed script.
+SEEDED_ADMIN_PASSWORD=change-me
