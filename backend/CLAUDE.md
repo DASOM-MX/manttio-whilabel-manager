@@ -60,7 +60,7 @@ The only holder of the **shared instance token**. Owns the tenant registry + bil
 - CORS allows the manager frontend origin only (dev: `http://localhost:4299`).
 
 ## Configuration + secrets
-- `wrangler.toml` declares **vars** (non-secret: `ENVIRONMENT`, `RESEND_FROM`, `BRAND_NAME`, `BRAND_SITE_URL`, `BRAND_LOGO_URL`, `BRAND_PAYMENT_INSTRUCTIONS`), the `[triggers]` cron, and the `TENANT_STATUS` KV binding — its `id` is a placeholder that local dev never reads; replace it with the real one (`wrangler kv namespace create TENANT_STATUS`) before the first deploy. Secrets are set via `wrangler secret put <NAME>`: `DATABASE_URL`, `JWT_SECRET`, `RESEND_API_KEY` (later: `SHARED_INSTANCE_TOKEN`).
+- `wrangler.toml` declares **vars** (non-secret: `ENVIRONMENT`, `RESEND_FROM`, `BRAND_NAME`, `BRAND_SITE_URL`, `BRAND_LOGO_URL`, `BRAND_PAYMENT_INSTRUCTIONS`), the `[triggers]` cron, and the `TENANT_STATUS` KV binding (real namespace id; local dev simulates KV regardless). Secrets are set via `wrangler secret put <NAME>`: `DATABASE_URL`, `JWT_SECRET`, `RESEND_API_KEY` (later: `SHARED_INSTANCE_TOKEN`).
 - `.dev.vars` (gitignored) provides the same secrets locally for `wrangler dev`, `drizzle-kit`, and the seed scripts — copy `.dev.vars.example`. Restart `wrangler dev` after creating it; it doesn't pick up a brand-new file.
 
 ## Scripts
