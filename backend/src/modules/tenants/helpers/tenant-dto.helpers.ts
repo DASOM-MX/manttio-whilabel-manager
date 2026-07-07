@@ -11,6 +11,9 @@ export const toTenantDto = (row: TenantRow & { taxInfo?: BillingReferenceRow | n
   api_base_url: row.apiBaseUrl,
   status: row.status,
   neon_project_ref: row.neonProjectRef,
+  // Not in the frontend model yet — additive, ready for the config-push UI.
+  modules: row.modules,
+  timezone: row.timezone,
   last_push_at: row.lastPushAt?.toISOString() ?? null,
   billing: {
     plan: row.plan,

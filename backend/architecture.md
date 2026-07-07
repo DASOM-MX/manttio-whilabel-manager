@@ -61,7 +61,7 @@ src/
       repository/tenants.repository.ts
       services/tenants.service.ts        # register/update, orchestration
       services/tenant-status.service.ts  # KV.put + registry mirror update (single writer)
-      services/tenant-push.service.ts    # fan-out via instances/ client  [blocked: draft-vs-live]
+      services/tenant-push.service.ts    # fan-out via instances/ client (settled 2026-07-05)
       services/setup-email.service.ts    # instance setup info email (composes email/ transport)
       templates/setup-email.html.ts      # markup only — never inline in a renderer
       helpers/setup-email.helpers.ts     # fills the template from a registry row
@@ -125,6 +125,8 @@ setup-email content in `tenants/setup-email.service.ts`, reminder content in
 | payment_type | text | default method: bank_transfer / stripe / cash / bank_check |
 | billing_anchor | date | first invoice date; monthly cycles bill on this day of the month |
 | billing_notes | text null | |
+| modules | jsonb | feature flags `{ billing, wms, crm, cms, scheduling }` — pushed to the instance |
+| timezone | text | IANA; tenant-wide default/fallback — pushed to the instance |
 | last_push_at | timestamptz null | stamped by push service |
 | created_at / updated_at | timestamptz | |
 
@@ -229,7 +231,7 @@ will read.
 | GET `/api/tenants/:envId` | repo find | 404 `tenant_not_found` |
 | PATCH `/api/tenants/:envId` | validate → service | registry fields only, not status |
 | PUT `/api/tenants/:envId/status` | validate → tenant-status.service | **KV.put first**, then mirror; ~60s propagation |
-| POST `/api/tenants/:envId/push` | tenant-push.service | ⛔ blocked on draft-vs-live decision |
+| POST `/api/tenants/:envId/push` | tenant-push.service | POST `{api_base_url}/internal/config` with `{ env_id, slug, modules, timezone }`; stamps `last_push_at` |
 | PUT `/api/tenants/:envId/tax-info` | validate → billing.service | upsert billing_reference |
 | GET `/api/tenants/:envId/billing-records` | repo list | newest-first |
 | POST `/api/tenants/:envId/billing-records` | validate → billing.service | drawer's Register action |
@@ -312,7 +314,10 @@ the handler just calls both services).
 5. **Email** — port the `email/` transport from the sibling, setup-email endpoint, reminder
    sweep + cron trigger (incl. contract-expiry flip) + manual re-send.
 6. **Status control** — KV binding + `PUT /status` + mirror.
-7. **Config push** — last; blocked on the draft-vs-live decision in the whitelabeled plan.
+7. **Config push** — last; the draft-vs-live blocker was settled 2026-07-05 (see the plan's §5):
+   the push carries operational config only (`modules` flags + IANA `timezone`); brand is a
+   separate instance-side row (seed/override push is a follow-up once the whitelabeled fork's
+   brand module exists) and CMS content never travels through the manager.
 
 ## Deviations from the sibling backend
 

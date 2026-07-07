@@ -18,14 +18,14 @@ BRAND_PAYMENT_INSTRUCTIONS = "Realice su pago por el medio acordado y responda a
 crons = ["0 15 * * *"]
 
 # Secrets are set via `wrangler secret put` (prod) / `.dev.vars` (dev) and NOT declared here:
-#   DATABASE_URL     Neon Postgres connection string (the manager's own DB)
-#   JWT_SECRET       HS256 signing secret for jose
-#   RESEND_API_KEY   Resend API key for outbound billing/setup emails
+#   DATABASE_URL            Neon Postgres connection string (the manager's own DB)
+#   JWT_SECRET              HS256 signing secret for jose
+#   RESEND_API_KEY          Resend API key for outbound billing/setup emails
+#   SHARED_INSTANCE_TOKEN   instance-push auth; rotated daily with a dual-valid
+#                           overlap window (instances accept current + next)
 
 # KV namespace for tenant status writes (`tenant:{envId}` -> { status }).
 [[kv_namespaces]]
 binding = "TENANT_STATUS"
 id = "ba1a3ccf4403473cb32b534a0f6c7eb8"
 
-# Shared instance-push token lives in a secret, never in code or the browser:
-#   wrangler secret put SHARED_INSTANCE_TOKEN

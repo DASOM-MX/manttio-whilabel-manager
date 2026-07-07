@@ -1,0 +1,2 @@
+ALTER TABLE "tenant_registry" ADD COLUMN "modules" jsonb DEFAULT '{"billing":true,"wms":true,"crm":true,"cms":true,"scheduling":true}'::jsonb NOT NULL;--> statement-breakpoint
+ALTER TABLE "tenant_registry" ADD COLUMN "timezone" text DEFAULT 'America/Monterrey' NOT NULL;

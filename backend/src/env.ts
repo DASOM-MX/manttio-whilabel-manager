@@ -19,8 +19,10 @@ export type Env = {
   // ONLY by tenants/services/tenant-status.service.ts. Registry mirrors it.
   TENANT_STATUS: KVNamespace;
 
-  // Wired in later phases (see architecture.md build order):
-  // SHARED_INSTANCE_TOKEN: string;         // phase 7 — config push
+  // Instance-push auth. Read ONLY inside instances/instance-client.service.ts;
+  // never logged, never in a response body or error message. Rotated daily with
+  // a dual-valid overlap window (instances accept current + next).
+  SHARED_INSTANCE_TOKEN: string;
 };
 
 // All superadmins are equal — no role tiers (add one only if a read-only operator ever exists).
