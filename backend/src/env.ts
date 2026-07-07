@@ -15,8 +15,11 @@ export type Env = {
   // Free-text payment instructions block appended to billing reminders.
   BRAND_PAYMENT_INSTRUCTIONS: string;
 
+  // Tenant status source of truth (`tenant:{envId}` → { status }); written
+  // ONLY by tenants/services/tenant-status.service.ts. Registry mirrors it.
+  TENANT_STATUS: KVNamespace;
+
   // Wired in later phases (see architecture.md build order):
-  // TENANT_STATUS: KVNamespace;            // phase 6 — status control
   // SHARED_INSTANCE_TOKEN: string;         // phase 7 — config push
 };
 

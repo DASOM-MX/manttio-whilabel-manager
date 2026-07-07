@@ -9,7 +9,7 @@ The only holder of the **shared instance token**. Owns the tenant registry + bil
 - **Drizzle ORM** for the schema (`src/modules/database/schema.ts` barrel + per-module `models/*.model.ts`) and queries (`src/modules/<domain>/repository/*`). Migrations in `drizzle/migrations/` via `drizzle-kit`. Live DB is current through migration `0003` (contracts).
 - **Auth** via JWT (HS256) using `jose`. Payload is `{ sub: adminId }` only — all superadmins are equal, no role tiers (add one only if a read-only operator ever exists). TTL: `7d` dev, `1d` prod (fail-closed on unknown env).
 - **pnpm** (not npm) — matches the sibling backend.
-- Build order lives in `architecture.md`; done: **1 DB foundations**, **2 auth**, **3 billing**, **4 contracts**, **5 email + cron**. Pending: 6 KV status control, 7 config push (blocked on draft-vs-live).
+- Build order lives in `architecture.md`; done: **1 DB foundations**, **2 auth**, **3 billing**, **4 contracts**, **5 email + cron**, **6 KV status control**. Pending: 7 config push (blocked on draft-vs-live).
 - The Worker exports `{ fetch, scheduled }` — the `scheduled` handler (cron `0 15 * * *` = 09:00 América/Monterrey) expires lapsed contracts then runs the billing reminder sweep. Test locally with `wrangler dev --test-scheduled` + `curl "http://localhost:8787/__scheduled?cron=0+15+*+*+*"`.
 - Conventions are inherited from the sibling `manttio-whitelabeled/backend` (see its `CLAUDE.md`) so both Workers feel like the same codebase; deviations are listed at the end of `architecture.md`.
 
@@ -55,12 +55,12 @@ The only holder of the **shared instance token**. Owns the tenant registry + bil
 
 ## Invariants
 - `SHARED_INSTANCE_TOKEN` lives only in Worker secrets (`wrangler secret put`) — never in code, git, or responses; read exclusively inside `instances/instance-client.service.ts` once it exists. Daily rotation with a dual-valid overlap window.
-- **KV is the status source of truth** (`tenant:{envId}` → `{ status }`); the registry `status` column is a UI mirror. If they disagree, KV wins.
+- **KV is the status source of truth** (`tenant:{envId}` → `{ status }`); the registry `status` column is a UI mirror. If they disagree, KV wins. Single-writer rule: only `tenants/services/tenant-status.service.ts` may touch `TENANT_STATUS` — KV.put first (a KV failure fails the request), mirror second (a mirror failure returns success + `warning: 'mirror_stale'`). The status switch only sets active/suspended; `provisioning` can't be re-entered from the API.
 - `billing_reference` data is admin-side only — never sent to a tenant DB, never exposed to any client but the manager frontend.
 - CORS allows the manager frontend origin only (dev: `http://localhost:4299`).
 
 ## Configuration + secrets
-- `wrangler.toml` declares **vars** (non-secret: `ENVIRONMENT`, `RESEND_FROM`, `BRAND_NAME`, `BRAND_SITE_URL`, `BRAND_LOGO_URL`, `BRAND_PAYMENT_INSTRUCTIONS`), the `[triggers]` cron, and bindings (`TENANT_STATUS` KV once phase 6 lands). Secrets are set via `wrangler secret put <NAME>`: `DATABASE_URL`, `JWT_SECRET`, `RESEND_API_KEY` (later: `SHARED_INSTANCE_TOKEN`).
+- `wrangler.toml` declares **vars** (non-secret: `ENVIRONMENT`, `RESEND_FROM`, `BRAND_NAME`, `BRAND_SITE_URL`, `BRAND_LOGO_URL`, `BRAND_PAYMENT_INSTRUCTIONS`), the `[triggers]` cron, and the `TENANT_STATUS` KV binding (real namespace id; local dev simulates KV regardless). Secrets are set via `wrangler secret put <NAME>`: `DATABASE_URL`, `JWT_SECRET`, `RESEND_API_KEY` (later: `SHARED_INSTANCE_TOKEN`).
 - `.dev.vars` (gitignored) provides the same secrets locally for `wrangler dev`, `drizzle-kit`, and the seed scripts — copy `.dev.vars.example`. Restart `wrangler dev` after creating it; it doesn't pick up a brand-new file.
 
 ## Scripts
