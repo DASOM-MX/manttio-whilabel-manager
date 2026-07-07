@@ -1,7 +1,8 @@
 import { sql } from 'drizzle-orm';
-import { check, date, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { check, date, jsonb, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import type { PaymentType, Plan } from '../../billing/enums/billing.enum';
-import type { TenantStatus } from '../enums/tenants.enum';
+import { DEFAULT_MODULES, DEFAULT_TIMEZONE } from '../constants/tenants.constants';
+import type { ModuleFlags, TenantStatus } from '../enums/tenants.enum';
 
 export const tenantRegistry = pgTable(
   'tenant_registry',
@@ -23,6 +24,10 @@ export const tenantRegistry = pgTable(
     // First invoice date; monthly cycles bill on this day of the month.
     billingAnchor: date('billing_anchor').notNull(),
     billingNotes: text('billing_notes'),
+    // Per-tenant feature flags + tenant-wide default timezone — the operational
+    // config the push sends to the instance (settled 2026-07-05).
+    modules: jsonb('modules').$type<ModuleFlags>().notNull().default(DEFAULT_MODULES),
+    timezone: text('timezone').notNull().default(DEFAULT_TIMEZONE),
     lastPushAt: timestamp('last_push_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),

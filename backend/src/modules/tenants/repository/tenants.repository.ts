@@ -26,6 +26,49 @@ export const findTenantByEnvId = async (db: Db, envId: string) => {
   return rows[0] ?? null;
 };
 
+// Detail/PATCH responses carry the joined tax info like the list does.
+export const findTenantWithTaxInfo = async (db: Db, envId: string) => {
+  const row = await db.query.tenantRegistry.findFirst({
+    with: { taxInfo: true },
+    where: eq(tenantRegistry.envId, envId),
+  });
+  return row ?? null;
+};
+
+// Registry fields only — status (KV-owned) and plan (contract-mirror) have
+// their own single-writer paths and are not accepted here.
+export const updateTenantRegistry = async (
+  db: Db,
+  envId: string,
+  fields: Partial<
+    Pick<
+      TenantRow,
+      | 'publicName'
+      | 'apiBaseUrl'
+      | 'billingEmail'
+      | 'paymentType'
+      | 'billingAnchor'
+      | 'billingNotes'
+      | 'modules'
+      | 'timezone'
+    >
+  >,
+) => {
+  const [row] = await db
+    .update(tenantRegistry)
+    .set({ ...fields, updatedAt: new Date() })
+    .where(eq(tenantRegistry.envId, envId))
+    .returning();
+  return row ?? null;
+};
+
+export const stampLastPushAt = async (db: Db, envId: string, at: Date) => {
+  await db
+    .update(tenantRegistry)
+    .set({ lastPushAt: at, updatedAt: at })
+    .where(eq(tenantRegistry.envId, envId));
+};
+
 // Mirror write: registry.plan follows the tenant's single active contract
 // (contracts service is the only caller — the contract wins on disagreement).
 export const updateTenantPlan = async (db: Db, envId: string, plan: TenantRow['plan']) => {
