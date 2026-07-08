@@ -4,6 +4,7 @@ import { logger } from 'hono/logger';
 import type { AppBindings } from './env';
 import { auth } from './modules/auth/controllers/auth.controller';
 import { jwtMiddleware } from './modules/auth/middleware/jwt.middleware';
+import { billing } from './modules/billing/controllers/billing.controller';
 import { tenants } from './modules/tenants/controllers/tenants.controller';
 
 const app = new Hono<AppBindings>();
@@ -20,6 +21,8 @@ app.route('/api/auth', auth);
 app.use('/api/*', jwtMiddleware);
 
 app.route('/api/tenants', tenants);
+// Billing owns the tax-info + billing-records sub-resources of a tenant.
+app.route('/api/tenants', billing);
 
 app.onError((err, c) => {
   if (err instanceof SyntaxError || /JSON/i.test(err.message)) {

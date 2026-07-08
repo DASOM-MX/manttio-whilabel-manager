@@ -175,6 +175,7 @@
                   <th>Payment type</th>
                   <th>Status</th>
                   <th>Issued</th>
+                  <th>Due</th>
                   <th>Paid</th>
                   <th>CFDI folio</th>
                 </tr>
@@ -191,6 +192,13 @@
                     <p-tag [value]="record.status" [severity]="record.status | billingStatusSeverity" />
                   </td>
                   <td class="text-sm">{{ record.issued_at | date: 'MMM d, y' }}</td>
+                  <td
+                    class="text-sm"
+                    [class.text-danger-600]="record.status === 'overdue'"
+                    [class.dark:text-danger-400]="record.status === 'overdue'"
+                  >
+                    {{ record.due_date | date: 'MMM d, y' }}
+                  </td>
                   <td class="text-sm">
                     @if (record.paid_at) {
                       {{ record.paid_at | date: 'MMM d, y' }}
@@ -205,7 +213,7 @@
               </ng-template>
               <ng-template #emptymessage>
                 <tr>
-                  <td colspan="7" class="py-8 text-center text-surface-500">
+                  <td colspan="8" class="py-8 text-center text-surface-500">
                     No billing records for this tenant yet.
                   </td>
                 </tr>
