@@ -22,10 +22,14 @@ const codeOf = (err: unknown): string | null => {
   return null;
 };
 
-const messageOf = (err: unknown): string =>
+// Exported so callers can tell WHICH constraint fired (e.g. slug vs pk) —
+// the Postgres message with the constraint name sits down the cause chain.
+export const dbErrorMessage = (err: unknown): string =>
   causeChain(err)
     .map((e) => (e instanceof Error ? e.message : String(e)))
     .join('\n');
+
+const messageOf = dbErrorMessage;
 
 export const isForeignKeyViolation = (err: unknown) =>
   codeOf(err) === FK_VIOLATION || /violates foreign key/i.test(messageOf(err));
