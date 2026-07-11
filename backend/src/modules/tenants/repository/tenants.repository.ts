@@ -1,5 +1,7 @@
 import { desc, eq } from 'drizzle-orm';
 import type { Db } from '../../database/client';
+import { billingReference } from '../../billing/models/billing-reference.model';
+import type { NewBillingReference } from '../../billing/types/billing.types';
 import { tenantRegistry } from '../models/tenants.model';
 import type { NewTenant, TenantRow } from '../types/tenants.types';
 
@@ -95,4 +97,24 @@ export const insertTenant = async (db: Db, input: NewTenant): Promise<TenantRow>
   const [row] = await db.insert(tenantRegistry).values(input).returning();
   if (!row) throw new Error('insertTenant returned no row');
   return row;
+};
+
+// Registration with the optional tax block is atomic — the reason this Worker
+// uses the WebSocket driver (real transactions), per CLAUDE.md. Sibling pattern:
+// the transaction lives inside one repository function with inline tx queries
+// (`Db` and the tx handle aren't the same type, so tx never crosses functions).
+// The billing_reference insert is plain (a brand-new tenant can't have a row).
+export const insertTenantWithTaxInfo = async (
+  db: Db,
+  tenant: NewTenant,
+  taxInfo: Omit<NewBillingReference, 'envId'> | null,
+): Promise<TenantRow> => {
+  return db.transaction(async (tx) => {
+    const [row] = await tx.insert(tenantRegistry).values(tenant).returning();
+    if (!row) throw new Error('insertTenantWithTaxInfo returned no row');
+    if (taxInfo) {
+      await tx.insert(billingReference).values({ ...taxInfo, envId: row.envId });
+    }
+    return row;
+  });
 };
